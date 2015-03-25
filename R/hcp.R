@@ -34,8 +34,8 @@
 ##' @references \url{http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0068141}
 ##' @examples
 ##' data(hcpp)
-##' F <- data$F
-##' Y <- data$Y
+##' F <- hcpp$F
+##' Y <- hcpp$Y
 ##' k <- 10
 ##' lambda1 <- 20
 ##' lambda2 <- 1
@@ -46,10 +46,15 @@
 hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
   {
     t0 <- proc.time()
+
+    ## (0) check dimensions
+    if(nrow(Y) != nrow(F))      
+      stop("Rows represent the samples for both Y and F!")
+      
     ## (1) take log of read counts
     if(log)
       {
-        message("Use log-data transformation.")
+        message("Log-transformation data...")
         Y <- log2(2+Y)
       }
 
@@ -65,8 +70,11 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
 
     ## (2) standardize the data
     if(stand) {
+      message("Standardize data...")
       Yn <- scale(Y, scale=apply(Y, 2, function(x) sqrt(sum((x - mean(x))^2))))
       Fn <- scale(F, scale=apply(F, 2, function(x) sqrt(sum((x - mean(x))^2))))
+      attributes(Yn)$`scaled:center` <- attributes(Yn)$`scaled:scale` <- NULL
+      attributes(Fn)$`scaled:center` <- attributes(Fn)$`scaled:scale` <- NULL
     }
     else
       {
@@ -78,10 +86,15 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
       stop("2: NA's in input data are not allowed!")
 
     ## (3) HCP
-    if(fast)
-      res <- rcpparma_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)
+    if(fast) {
+      message("Run RcppArmadillo implemented HCP algorithm...")
+      res <- rcpparma_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)      
+    }
     else
-      res <- r_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)
+      {
+        message("Run plain R implemented HCP algorithm...")
+        res <- r_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)
+      }
 
     if(verbose)
       message(paste("Finished after", res$iter, "iterations of", iter, "iterations."))

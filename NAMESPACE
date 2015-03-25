@@ -1,5 +1,4 @@
 useDynLib(Rhcpp)
 importFrom(Rcpp, evalCpp)
-export("rcpparma_hcp")
-export("r_hcp")
+export("hcp")
 

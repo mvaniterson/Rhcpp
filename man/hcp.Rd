@@ -57,8 +57,8 @@ task. typically, if lambda>5, then hidden factors match the known covariates clo
 }
 \examples{
 data(hcpp)
-F <- data$F
-Y <- data$Y
+F <- hcpp$F
+Y <- hcpp$Y
 k <- 10
 lambda1 <- 20
 lambda2 <- 1

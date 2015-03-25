@@ -4,8 +4,8 @@ library(Rhcpp)
 data(hcpp)
 
 ##set parameters
-F <- data$F
-Y <- data$Y
+F <- hcpp$F
+Y <- hcpp$Y
 k <- 10
 lambda1 <- 20
 lambda2 <- 1
@@ -14,18 +14,16 @@ iter <- 100
 
 ##read expected result
 Mres <- read.table(file.path(path.package("Rhcpp"), "extdata", "Res.txt.bz2"), sep="\t")
+res <- hcp(F, Y, k, lambda1, lambda2, lambda3, iter, fast=FALSE)
 
-Rres <- r_hcp(Y, F, k, lambda1, lambda2, lambda3, iter)
-str(Rres)
+library(RUnit)
+R <- as.vector(res$Res)
+M <- as.numeric(unlist(t(Mres)))
+checkEquals(R, M, tolerance=0.001) ##not exact probably due to errors differences
 
-rrss <- function(obs, exp)
-  {
-    obs <-  obs$Yn - obs$Z%*%obs$B
-    sum((as.vector(Res) - as.vector(exp))^2)
-  }
+res <- hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
+R <- as.vector(res$Res)
+checkEquals(R, M, tolerance=0.05) ##slightly higher because of different initialization
 
-checkEquals(rrss(Rres, Mres), 0)
 
-Rcpparmares <- Rcpparma_hcp(Y, F, k, lambda1, lambda2, lambda3, iter)
 
-checkEquals(rrss(Rcpparmares, Mres), 0)
