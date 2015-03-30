@@ -85,6 +85,9 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     if(sum(is.na(Fn)) > 0 | sum(is.na(Yn)) > 0)
       stop("2: NA's in input data are not allowed!")
 
+    ##remove and call garbage collector
+    rm(F); rm(Y); gc()
+    
     ## (3) HCP
     if(fast) {
       message("Run RcppArmadillo implemented HCP algorithm...")
