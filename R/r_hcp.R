@@ -46,7 +46,8 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
             B <- solve(crossprod(Z) + lambda2*diagZ, crossprod(Z,Y))
 
             ##U <- solve(t(F)%*%F*lambda1 + lambda3*diagU, lambda1*t(F)%*%Z)
-            U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
+            ##U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
+            U <- solve(crossprod(F) + diagU*(lambda3/lambda1), crossprod(F,Z))
            
             if(ii > 1)
               {
