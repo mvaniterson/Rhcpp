@@ -2,7 +2,7 @@
 ##'
 ##' This function can be used to find the optimal model parameters
 ##' with a used-defined performance function
-##' 
+##'
 ##' @title Perform the HCP normalization algorithm on a grid of model parameters
 ##' @param F a matrix nxd of known covariates, where n is the number of
 ##' subjects and d is the number of known covariates. *must be standardize
@@ -40,6 +40,11 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
     stop("A model performance function that accepts the output of hcp should be provided!")
 
   par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
+
+  ##initial run perform log, stand once
+  init <- hcp(F, Y, k = 1, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+  Y <- init$Y
+  F <- init$F
   
   map <- function(i) {
     k <- par$k[i]
@@ -47,15 +52,13 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
     lambda2 <- par$lambda2[i]
     lambda3 <- par$lambda3[i]
     message(paste("optimizing k =", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
-    
-    res <- hcp(F, Y, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+
+    res <- hcp(F, Y, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
     performance(res)
   }
 
-  res <- bplapply(1:nrow(par), map)  
-  res <- unlist(res)
+  res <- bplapply(2:nrow(par), map)
+  res <- c(performance(init), unlist(res))
   names(res) <- apply(par, 1, paste0, collapse=":")
   res
 }
-
-

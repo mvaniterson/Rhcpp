@@ -1,4 +1,4 @@
-##' R/Rcpp implementation of the HCP algorithm
+##' Rcpp implementation of the HCP algorithm
 ##'
 ##' Objective:
 ##' This function solves the following problem:
@@ -48,55 +48,50 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     t0 <- proc.time()
 
     ## (0) check dimensions
-    if(nrow(Y) != nrow(F))      
+    if(nrow(Y) != nrow(F))
       stop("Rows represent the samples for both Y and F!")
-      
+
+    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
+      stop("NA's in input data are not allowed!")
+
     ## (1) take log of read counts
     if(log)
       {
         message("Log-transformation data...")
         Y <- log2(2+Y)
+        if(sum(is.na(Y)) > 0)
+          stop("NA's introduced by log-transformation these are not allowed!")
       }
-
-    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
-      stop("1: NA's in input data are not allowed!")
 
     standardize <- function(x)
       {
-        x <- apply(x, 1, function(x) x - mean(x))
-        x <- apply(x, 1, function(x) x/sqrt(sum(x^2)))
+        x <- x - outer(rep(1, nrow(x)), colMeans(x))
+        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2)))
+
+        ##x <- apply(x, 2, function(x) x - mean(x))
+        ##x <- apply(x, 2, function(x) x/sqrt(sum(x^2)))
         x
       }
 
     ## (2) standardize the data
     if(stand) {
       message("Standardize data...")
-      Yn <- scale(Y, scale=apply(Y, 2, function(x) sqrt(sum((x - mean(x))^2))))
-      Fn <- scale(F, scale=apply(F, 2, function(x) sqrt(sum((x - mean(x))^2))))
-      attributes(Yn)$`scaled:center` <- attributes(Yn)$`scaled:scale` <- NULL
-      attributes(Fn)$`scaled:center` <- attributes(Fn)$`scaled:scale` <- NULL
+      Y <- standardize(Y)
+      F <- standardize(F)
     }
-    else
-      {
-        Yn <- Y
-        Fn <- F
-      }
 
-    if(sum(is.na(Fn)) > 0 | sum(is.na(Yn)) > 0)
-      stop("2: NA's in input data are not allowed!")
+    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
+      stop("NA's introduced by standardization these are not allowed!")
 
-    ##remove and call garbage collector
-    rm(F); rm(Y); gc()
-    
     ## (3) HCP
     if(fast) {
       message("Run RcppArmadillo implemented HCP algorithm...")
-      res <- rcpparma_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)      
+      res <- rcpparma_hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
     }
     else
       {
         message("Run plain R implemented HCP algorithm...")
-        res <- r_hcp(Fn, Yn, k, lambda1, lambda2, lambda3, iter)
+        res <- r_hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
       }
 
     if(verbose)
@@ -106,5 +101,5 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     B <- res$B
 
     message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
-    return(list(Res = t(Yn - Z%*%B), Cov = Z))
+    return(list(Res = t(Yn - Z%*%B), Cov = Z, Y=Y, F=F))
   }

@@ -10,7 +10,7 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
     U <- matrix(0, ncol(F), k)
     Z <- matrix(0, nrow(F), k)
     n <- k*ncol(Y)
-    ## B <- matrix(runif(n), ncol(Z), ncol(Y))
+    ##B <- matrix(runif(n), ncol(Z), ncol(Y))
     B <- matrix((1:n)/n, k, ncol(Y))
 
     n1 <- nrow(F)
@@ -66,8 +66,7 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
     ##db <- (t(Z)*Z + lambda2*eye(size(Z,2)))*B - t(Z)*Y
     ##du <- (t(F)*F*lambda1 + lambda3*eye(size(U,1)))*U-lambda1*t(F)*Z
 
-
-    list(Z=Z, B=B, U=U, o=o)
+    list(Z=Z, B=B, U=U, o=o, iter=ii)
   }
 
 
