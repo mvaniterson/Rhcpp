@@ -36,8 +36,8 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
         o <- numeric(iter)
         for(ii in 1:iter)
           {
-            o[ii] <- norm(Y-Z%*%B, type="F") + norm(Z-F%*%U, type="F")*lambda1 + norm(B, type="F")*lambda2 + lambda3*norm(U, type="F")
-            ##o[ii] <- sum((Y-Z%*%B)^2) + sum((Z-F%*%U)^2)*lambda1 + sum(B^2)*lambda2 + lambda3*sum(U^2)
+            ##o[ii] <- norm(Y-Z%*%B, type="F") + norm(Z-F%*%U, type="F")*lambda1 + norm(B, type="F")*lambda2 + lambda3*norm(U, type="F")
+            o[ii] <- sum((Y-Z%*%B)^2) + sum((Z-F%*%U)^2)*lambda1 + sum(B^2)*lambda2 + lambda3*sum(U^2)
 
             ##Z <- (Y%*%t(B) + lambda1*F%*%U) %*% solve(B%*%t(B) + lambda1*diagB)
             Z <- (tcrossprod(Y, B) + lambda1*F%*%U) %*% solve(tcrossprod(B) + lambda1*diagB)
