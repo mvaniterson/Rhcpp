@@ -9,9 +9,9 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
 
     U <- matrix(0, ncol(F), k)
     Z <- matrix(0, nrow(F), k)
-    n <- ncol(Z)*ncol(Y)
+    n <- k*ncol(Y)
     ## B <- matrix(runif(n), ncol(Z), ncol(Y))
-    B <- matrix((1:n)/n, ncol(Z), ncol(Y))
+    B <- matrix((1:n)/n, k, ncol(Y))
 
     n1 <- nrow(F)
     d1 <- ncol(F)
@@ -27,8 +27,8 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
 
 
     ##predefine for slight preformance improvement
-    diagB <- diag(nrow(B))
-    diagZ <- diag(ncol(Z))
+    diagB <- diag(k)
+    diagZ <- diag(k)
     diagU <- diag(nrow(U))
 
     if(iter > 0)
