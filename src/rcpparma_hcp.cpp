@@ -54,7 +54,9 @@ Rcpp::List rcpparma_hcp(NumericMatrix Fr, NumericMatrix Yr, int k, int lambda1, 
           B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*Y);
           U = solve(F.t()*F*lambda1 + lambda3*diagU, lambda1*F.t()*Z);
         */
-        o[ii] = accu(pow(Y-Z*B,2)) + accu(pow(Z-F*U,2))*lambda1 + accu(pow(B,2))*lambda2 + lambda3*accu(pow(U,2));
+
+        o[ii] = norm(Y-Z*B,"fro") + norm(Z-F*U,"fro")*lambda1 + norm(B,"fro")*lambda2 + lambda3*norm(U,"fro");
+        //o[ii] = accu(pow(Y-Z*B,2)) + accu(pow(Z-F*U,2))*lambda1 + accu(pow(B,2))*lambda2 + lambda3*accu(pow(U,2));
         Z = (Y*B.t() + lambda1*F*U)*(B*B.t() + lambda1*diagB).i();
         B = (Z.t()*Z + lambda2*diagZ).i()*(Z.t()*Y);
         U = (F.t()*F + (lambda3/lambda1)*diagU).i()*(F.t()*Z);
