@@ -39,14 +39,14 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL)
             o[ii] <- norm(Y-Z%*%B, type="F") + norm(Z-F%*%U, type="F")*lambda1 + norm(B, type="F")*lambda2 + lambda3*norm(U, type="F")
             ##o[ii] <- sum((Y-Z%*%B)^2) + sum((Z-F%*%U)^2)*lambda1 + sum(B^2)*lambda2 + lambda3*sum(U^2)
 
-            Z <- (Y%*%t(B) + lambda1*F%*%U) %*% solve(B%*%t(B) + lambda1*diagB)
-            ##Z <- (tcrossprod(Y, B) + lambda1*F%*%U) %*% solve(tcrossprod(B) + lambda1*diagB)
+            ##Z <- (Y%*%t(B) + lambda1*F%*%U) %*% solve(B%*%t(B) + lambda1*diagB)
+            Z <- (tcrossprod(Y, B) + lambda1*F%*%U) %*% solve(tcrossprod(B) + lambda1*diagB)
 
-            B <- solve(t(Z)%*%Z + lambda2*diagZ, t(Z)%*%Y)
-            ##B <- solve(crossprod(Z) + lambda2*diagZ, crossprod(Z,Y))
+            ##B <- solve(t(Z)%*%Z + lambda2*diagZ, t(Z)%*%Y)
+            B <- solve(crossprod(Z) + lambda2*diagZ, crossprod(Z,Y))
 
-            U <- solve(t(F)%*%F*lambda1 + lambda3*diagU, lambda1*t(F)%*%Z)
-            ##U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
+            ##U <- solve(t(F)%*%F*lambda1 + lambda3*diagU, lambda1*t(F)%*%Z)
+            U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
            
             if(ii > 1)
               {
