@@ -101,5 +101,5 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     B <- res$B
 
     message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
-    return(list(Res = t(Yn - Z%*%B), Cov = Z, Y=Y, F=F))
+    return(list(Res = t(Y - Z%*%B), Cov = Z, Y=Y, F=F))
   }
