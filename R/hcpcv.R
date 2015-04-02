@@ -41,8 +41,8 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
 
   par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
 
-  ##initial run perform log, stand once
-  init <- hcp(F, Y, k = 1, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+  ##initial run perform log-transformation and standarization only once
+  init <- hcp(F, Y, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
   Y <- init$Y
   F <- init$F
   
