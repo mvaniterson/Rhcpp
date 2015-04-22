@@ -81,7 +81,8 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     }
 
     if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
-      stop("NA's introduced by standardization these are not allowed!")
+      stop(paste("NA's introduced by the standardization these are not allowed!",
+                 "Row(s) (F):", paste(which(apply(F, 1, function(x) any(is.na(x)))), collapse=", ")))
 
     ## (3) HCP
     if(fast) {
