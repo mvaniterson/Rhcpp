@@ -1,3 +1,16 @@
+#convert seconds to minutes, hours and days
+.sec2time <- function(x) {
+    time <- if(x < 60)
+        paste0(round(x, 0), "s.")
+    else if(x < 60*60)
+        paste0(x%/%60, "m:", .sec2time(x%%60))
+    else if(x < 60*60*24)
+        paste0(x%/%(60*60), "h:", .sec2time(x%%(60*60)))
+    else if(x < 60*60**24*7)
+        paste0(x%/%(60*60*24), "d:", .sec2time(x%%(60*60*24)))
+    time
+}
+
 ##' Perform the HCP normalization algorithm on a grid of model parameters
 ##'
 ##' This function can be used to find the optimal model parameters
@@ -17,7 +30,8 @@
 ##' @param fast default use fast RcppArmadillo implementation
 ##' @param verbose default TRUE
 ##' @param performance function accepting res with res$Res the transformed Residuals
-##' @return vector of performance measures with names indicating the model parameters
+##' @return vector of performance measures with names indicating the model parameter
+##' @importFrom BiocParallel bpworkers bplapply
 ##' @author mvaniterson
 ##' @examples
 ##' \dontrun{
@@ -36,29 +50,36 @@
 ##' }
 hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
 
-  if(is.null(performance))
-    stop("A model performance function that accepts the output of hcp should be provided!")
+    if(is.null(performance))
+        stop("A model performance function that accepts the output of hcp should be provided!")
 
-  par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
+    par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
 
-  ##initial run perform log-transformation and standarization only once
-  init <- hcp(F, Y, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
-  Y <- init$Y
-  F <- init$F
-  
-  map <- function(i) {
-    k <- par$k[i]
-    lambda1 <- par$lambda1[i]
-    lambda2 <- par$lambda2[i]
-    lambda3 <- par$lambda3[i]
-    message(paste("optimizing k =", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
+    ##initial run perform log-transformation and standarization only once if necessary
+    t0 <- proc.time()
+    init <- hcp(F, Y, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+    estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
+    
+    if(verbose) 
+        message(paste("Fitting all models will approx. take:", .sec2time(estimatedTime)))
 
-    res <- hcp(F, Y, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
-    performance(res)
-  }
+    Y <- init$Y
+    F <- init$F
 
-  res <- bplapply(2:nrow(par), map)
-  res <- c(performance(init), unlist(res))
-  names(res) <- apply(par, 1, paste0, collapse=":")
-  res
+    map <- function(i) {
+        k <- par$k[i]
+        lambda1 <- par$lambda1[i]
+        lambda2 <- par$lambda2[i]
+        lambda3 <- par$lambda3[i]
+        message(paste("optimizing k =", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
+
+        res <- hcp(F, Y, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
+        performance(res)
+    }
+
+    res <- bplapply(2:nrow(par), map)
+    res <- c(performance(init), unlist(res))
+    names(res) <- apply(par, 1, paste0, collapse=":")
+    res
 }
+

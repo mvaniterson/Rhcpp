@@ -65,9 +65,10 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
 
     standardize <- function(x)
       {
-        x <- x - outer(rep(1, nrow(x)), colMeans(x))
-        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2)))
-
+        x <- x - outer(rep(1, nrow(x)), colMeans(x)) ##center
+        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2))) ##scale SS
+        x <- x*outer(rep(1, nrow(x)), sqrt(nrow(x)/colSums(x^2))) ##scale st. dev.
+        
         ##x <- apply(x, 2, function(x) x - mean(x))
         ##x <- apply(x, 2, function(x) x/sqrt(sum(x^2)))
         x
@@ -100,7 +101,9 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
 
     Z <- res$Z
     B <- res$B
-
-    message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
-    return(list(Res = Y - Z%*%B, Cov = Z, Y=Y, F=F))
+    
+    if(verbose)
+        message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
+    
+    return(list(Res = Y - Z%*%B, Cov=Z, B=B, Y=Y, F=F))
   }

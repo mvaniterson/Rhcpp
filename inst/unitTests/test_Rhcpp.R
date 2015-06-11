@@ -26,21 +26,4 @@ res <- hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
 R <- as.vector(res$Res)
 checkEquals(R, M, tolerance=0.05) ##slightly higher because of different initialization
 
-lambdaRange <- c(1,5)
-kRange <- c(10)
-res <- hcpcv(F, Y, kRange, lambdaRange, iter, performance=function(res) {sum(res$Res)})
-res
-dim(Y)
 
-n <- 2000
-q <- 20
-p <- 300000
-F <- matrix(runif(n*q), n, q)
-Y <- matrix(runif(n*p), n, p)
-##res <- hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
-
-(p+q)/n / (98/2)
-
-(100*(p+q)/n * 0.2044898)/60 ##worse performance  100 iterations
-
-0.2044898 sec per iteration per features/per samples
