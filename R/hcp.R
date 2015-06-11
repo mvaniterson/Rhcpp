@@ -46,7 +46,11 @@
 hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
   {
     t0 <- proc.time()
-
+    if(is.null(F)) {
+        message("Assume only hidden components")
+        F <- matrix(runif(2*nrow(Y), 1, 10), nrow=nrow(Y), ncol=2)
+        lambda3 <- 0 ##do not penalized the coefficients with an effect on the known covariates
+    }
     ## (0) check dimensions
     if(nrow(Y) != nrow(F))
       stop("Rows represent the samples for both Y and F!")
