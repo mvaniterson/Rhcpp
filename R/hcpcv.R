@@ -58,6 +58,7 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
     init <- hcp(F, Y, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+    resinit <- performance(init)
     estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
     
     if(verbose) 
@@ -78,7 +79,7 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
     }
 
     res <- bplapply(2:nrow(par), map)
-    res <- c(performance(init), unlist(res))
+    res <- c(resinit, unlist(res))
     names(res) <- apply(par, 1, paste0, collapse=":")
     res
 }
