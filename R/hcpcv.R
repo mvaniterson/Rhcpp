@@ -6,7 +6,7 @@
         paste0(x%/%60, "m:", .sec2time(x%%60))
     else if(x < 60*60*24)
         paste0(x%/%(60*60), "h:", .sec2time(x%%(60*60)))
-    else if(x < 60*60**24*7)
+    else if(x < 60*60*24*7)
         paste0(x%/%(60*60*24), "d:", .sec2time(x%%(60*60*24)))
     time
 }
@@ -62,7 +62,7 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
     estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
     
     if(verbose) 
-        message(paste("Fitting all models will approx. take:", .sec2time(estimatedTime)))
+        message(paste0("Fitting all, ", nrow(par), ", models will approximately take: ", .sec2time(estimatedTime)))
 
     Y <- init$Y
     F <- init$F

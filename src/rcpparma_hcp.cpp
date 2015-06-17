@@ -31,8 +31,9 @@ Rcpp::List rcpparma_hcp(NumericMatrix Fr, NumericMatrix Yr, int k, int lambda1, 
   for(int i=0; i<k; i++)
     for(int j=0; j<d2; j++)
       {
-        Br[i,j] = unif[cntr];
-        cntr += 1;
+        //Br[i,j] = unif[cntr];
+        //cntr += 1;
+        Br[i,j] = (i+j)/(k*d2);
       }
 
   Rcpp::NumericVector o(iter);
