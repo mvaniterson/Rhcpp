@@ -77,7 +77,9 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
         res <- hcp(F, Y, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
         performance(res)
     }
-
+    
+    gc() ##reduce memory footprint before running in parallel
+    
     res <- bplapply(2:nrow(par), map)
     res <- c(resinit, unlist(res))
     names(res) <- apply(par, 1, paste0, collapse=":")
