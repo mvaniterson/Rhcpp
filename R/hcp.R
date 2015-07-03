@@ -70,9 +70,7 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=T
     standardize <- function(x)
       {
         x <- x - outer(rep(1, nrow(x)), colMeans(x)) ##center
-        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2))) ##scale SS
-        ##x <- x*outer(rep(1, nrow(x)), sqrt(nrow(x)/colSums(x^2))) ##scale st. dev.
-        
+        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2))) ##scale SS        
         ##x <- apply(x, 2, function(x) x - mean(x))
         ##x <- apply(x, 2, function(x) x/sqrt(sum(x^2)))
         x
