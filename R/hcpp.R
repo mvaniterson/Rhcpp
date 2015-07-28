@@ -105,7 +105,7 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, l
 
     Z <- res$Z
     B <- res$B
-    gamma <- res$gamma
+    gamma <- res$g
     ##should I force x to have dim nx1?
     err <- as.vector(sqrt(colSums((Y - Z%*%B - x%*%gamma)^2)/(nrow(Y)-2)))
     pval <- 2*pnorm(-abs(gamma/err)) ##approximation to t; n is usually large enough
