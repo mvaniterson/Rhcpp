@@ -63,7 +63,7 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
         Z = ((Y - g*x)*B.t() + lambda1*F*U)*(B*B.t() + lambda1*diagB).i();
         B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*(Y-g*x));
         U = solve(F.t()*F + (lambda3/lambda1)*diagU, F.t()*Z);
-        g = solve(x, Y-Z*B)
+        g = solve(x, Y-Z*B);
 
         if(ii > 0) {
           if((abs(o[ii] - o[ii-1])/o[ii]) < tol)

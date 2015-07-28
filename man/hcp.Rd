@@ -56,9 +56,9 @@ evaluating the "performance" of the  resulting residual data on a desired
 task. typically, if lambda>5, then hidden factors match the known covariates closely.
 }
 \examples{
-data(hcpp)
-F <- hcpp$F
-Y <- hcpp$Y
+data(rhcppdata)
+F <- rhcppdata$F
+Y <- rhcppdata$Y
 k <- 10
 lambda1 <- 20
 lambda2 <- 1

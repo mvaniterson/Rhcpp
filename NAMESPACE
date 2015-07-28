@@ -1,6 +1,6 @@
 useDynLib(Rhcpp)
 importFrom(Rcpp, evalCpp)
-importFrom(BiocParallel, bplapply)
+importFrom(BiocParallel, bplapply, bpworkers)
 export("hcp")
 export("hcpcv")
 export("hcpp")

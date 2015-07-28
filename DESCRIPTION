@@ -2,8 +2,8 @@ Package: Rhcpp
 Type: Package
 Title: Normalizing RNA-Sequencing Data by Modeling Hidden Covariates with Prior
  Knowledge 
-Version: 1.2
-Date: 2015-03-30
+Version: 1.3
+Date: 2015-07-28
 Author: Sara Mostafavi [aut], M. van Iterson [cre]
 Maintainer: Maarten van Iterson <m.van_iterson@lumc.nl>
 Description: A fast R implementation using Rcpp based on the original matlab HCP

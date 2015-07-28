@@ -33,9 +33,9 @@
 ##' @author mvaniterson
 ##' @references \url{http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0068141}
 ##' @examples
-##' data(hcpp)
-##' F <- hcpp$F
-##' Y <- hcpp$Y
+##' data(rhcppdata)
+##' F <- rhcppdata$F
+##' Y <- rhcppdata$Y
 ##' k <- 10
 ##' lambda1 <- 20
 ##' lambda2 <- 1

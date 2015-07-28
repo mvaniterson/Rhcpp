@@ -49,9 +49,9 @@ library(Rhcpp)
 register(MulticoreParam(3))
 kRange <- c(10, 20)
 lambdaRange <- c(1, 5, 10, 20)
-data(hcpp)
-F <- hcpp$F
-Y <- hcpp$Y
+data(rhcppdata)
+F <- rhcppdata$F
+Y <- rhcppdata$Y
 ##not really meaning full performance function
 res <- hcppcv(F, Y, kRange, lambdaRange, performance=function(res) sum(res$Res))
 hist(res)
