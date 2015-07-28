@@ -58,6 +58,8 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, l
     if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
         stop("NA's in input data are not allowed!")
 
+    x <- matrix(x, ncol=1)
+    
     ## (1) take log of read counts
     if(log) {
         message("Log-transformation data...")
