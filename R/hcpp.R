@@ -30,7 +30,7 @@
 ##' @return list
 ##' Z: matrix of hidden components, dimensionality: nxk,
 ##' B: matrix of effects of hidden components, dimensionality: kxg,
-##' o: value of objective function on consecutive iterations. 
+##' o: value of objective function on consecutive iterations.
 ##' @author mvaniterson
 ##' @references \url{http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0068141}
 ##' @examples
@@ -44,8 +44,7 @@
 ##' iter <- 100
 ##' ##and run
 ##' ##Rres <- hcpp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
-  {
+hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
     t0 <- proc.time()
     if(is.null(F)) {
         message("Assume only hidden components")
@@ -54,56 +53,53 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, l
     }
     ## (0) check dimensions
     if(nrow(Y) != nrow(F))
-      stop("Rows represent the samples for both Y and F!")
+        stop("Rows represent the samples for both Y and F!")
 
     if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
-      stop("NA's in input data are not allowed!")
+        stop("NA's in input data are not allowed!")
 
     ## (1) take log of read counts
-    if(log)
-      {
+    if(log) {
         message("Log-transformation data...")
         Y <- log2(2+Y)
         if(sum(is.na(Y)) > 0)
-          stop("NA's introduced by log-transformation these are not allowed!")
-      }
+            stop("NA's introduced by log-transformation these are not allowed!")
+    }
 
-    standardize <- function(x)
-      {
+    standardize <- function(x) {
         x <- x - outer(rep(1, nrow(x)), colMeans(x)) ##center
-        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2))) ##scale SS        
+        x <- x*outer(rep(1, nrow(x)), 1/sqrt(colSums(x^2))) ##scale SS
         ##x <- apply(x, 2, function(x) x - mean(x))
         ##x <- apply(x, 2, function(x) x/sqrt(sum(x^2)))
         x
-      }
+    }
 
     ## (2) standardize the data
     if(stand) {
-      message("Standardize data...")
-      Y <- standardize(Y)
-      F <- standardize(F)
-      x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
+        message("Standardize data...")
+        Y <- standardize(Y)
+        F <- standardize(F)
+        x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
     }
 
-    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(x)) > 0) {        
-      message(paste("Row(s) (F):", paste(which(apply(F, 1, function(x) any(is.na(x)))), collapse=", ")))
-      message(paste("Row(s) (Y):", paste(which(apply(Y, 1, function(x) any(is.na(x)))), collapse=", ")))
-      stop("NA's introduced by the standardization these are not allowed!")
-     }
+    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(x)) > 0) {
+        message(paste("Row(s) (F):", paste(which(apply(F, 1, function(x) any(is.na(x)))), collapse=", ")))
+        message(paste("Row(s) (Y):", paste(which(apply(Y, 1, function(x) any(is.na(x)))), collapse=", ")))
+        stop("NA's introduced by the standardization these are not allowed!")
+    }
 
     ## (3) HCP
     if(fast) {
-      message("Run RcppArmadillo implemented HCP algorithm...")
-      res <- rcpparma_hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
+        message("Run RcppArmadillo implemented HCP algorithm...")
+        res <- rcpparma_hcpp(F, Y, x, k, lambda1, lambda2, lambda3, iter)
     }
-    else
-      {
+    else {
         message("Run plain R implemented HCP algorithm...")
         res <- r_hcpp(F, Y, x, k, lambda1, lambda2, lambda3, iter)
-      }
+    }
 
     if(verbose)
-      message(paste("Finished after", res$iter, "iterations of", iter, "iterations."))
+        message(paste("Finished after", res$iter, "iterations of", iter, "iterations."))
 
     Z <- res$Z
     B <- res$B
@@ -112,9 +108,9 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, l
     err <- as.vector(sqrt(colSums((Y - Z%*%B - x%*%gamma)^2)/(nrow(Y)-2)))
     pval <- 2*pnorm(-abs(gamma/err)) ##approximation to t; n is usually large enough
     names(pval) <- colnames(Y)
-    
+
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
-    
+
     return(list(Res = Y - Z%*%B, Cov=Z, B=B, gamma=as.vector(gamma), err=as.vector(err), pval=as.vector(pval), Y=Y, F=F))
-  }
+}
