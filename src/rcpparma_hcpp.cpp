@@ -26,7 +26,7 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
   Rcpp::NumericMatrix Ur(d1, k);
   Rcpp::NumericMatrix Zr(n1, k);
   Rcpp::NumericMatrix Br(k, d2);
-  Rcpp::NumericMatrix gr(1, n1);
+  Rcpp::NumericMatrix gr(1, d2);
 
   Rcpp::NumericVector unif = runif(k*d2);
   int cntr = 0;
@@ -59,9 +59,9 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
           U = solve(F.t()*F*lambda1 + lambda3*diagU, lambda1*F.t()*Z);
         */
         //o[ii] = accu(pow(Y-Z*B,2)) + accu(pow(Z-F*U,2))*lambda1 + accu(pow(B,2))*lambda2 + lambda3*accu(pow(U,2));
-        o[ii] = norm(Y-g*x-Z*B) + norm(Z-F*U)*lambda1 + norm(B)*lambda2 + lambda3*norm(U); //for matrices Frobenius norm is default p = 2 or p = "fro"
-        Z = ((Y - g*x)*B.t() + lambda1*F*U)*(B*B.t() + lambda1*diagB).i();
-        B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*(Y-g*x));
+        o[ii] = norm(Y-x*g-Z*B) + norm(Z-F*U)*lambda1 + norm(B)*lambda2 + lambda3*norm(U); //for matrices Frobenius norm is default p = 2 or p = "fro"
+        Z = ((Y - x*g)*B.t() + lambda1*F*U)*(B*B.t() + lambda1*diagB).i();
+        B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*(Y-x*g));
         U = solve(F.t()*F + (lambda3/lambda1)*diagU, F.t()*Z);
         g = solve(x, Y-Z*B);
 
