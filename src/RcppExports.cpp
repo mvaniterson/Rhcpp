@@ -23,3 +23,21 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// rcpparma_hcpp
+Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, int k, int lambda1, int lambda2, int lambda3, int iter);
+RcppExport SEXP Rhcpp_rcpparma_hcpp(SEXP FrSEXP, SEXP YrSEXP, SEXP xrSEXP, SEXP kSEXP, SEXP lambda1SEXP, SEXP lambda2SEXP, SEXP lambda3SEXP, SEXP iterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type Fr(FrSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Yr(YrSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type xr(xrSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type lambda1(lambda1SEXP);
+    Rcpp::traits::input_parameter< int >::type lambda2(lambda2SEXP);
+    Rcpp::traits::input_parameter< int >::type lambda3(lambda3SEXP);
+    Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
+    __result = Rcpp::wrap(rcpparma_hcpp(Fr, Yr, xr, k, lambda1, lambda2, lambda3, iter));
+    return __result;
+END_RCPP
+}

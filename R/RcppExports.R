@@ -5,3 +5,7 @@ rcpparma_hcp <- function(Fr, Yr, k, lambda1, lambda2, lambda3, iter) {
     .Call('Rhcpp_rcpparma_hcp', PACKAGE = 'Rhcpp', Fr, Yr, k, lambda1, lambda2, lambda3, iter)
 }
 
+rcpparma_hcpp <- function(Fr, Yr, xr, k, lambda1, lambda2, lambda3, iter) {
+    .Call('Rhcpp_rcpparma_hcpp', PACKAGE = 'Rhcpp', Fr, Yr, xr, k, lambda1, lambda2, lambda3, iter)
+}
+
