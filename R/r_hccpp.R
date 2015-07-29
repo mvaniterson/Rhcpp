@@ -46,7 +46,7 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
             ##U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
             U <- solve(crossprod(F) + diagU*(lambda3/lambda1), crossprod(F,Z))
 
-            gamma <- solve(crossprod(x))%*% crossprod(x, Y - Z%*%B)
+            gamma <- solve(x, Y - Z%*%B)
 
             if(ii > 1) {
                 if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
