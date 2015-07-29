@@ -47,7 +47,7 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
             U <- solve(crossprod(F) + (lambda3/lambda1)*diagU, crossprod(F,Z))
             
             ##gamma <- solve(crossprod(x))%*%t(x)%*%(Y - Z%*%B)
-            xtx <- as.numric(crossprod(x)) ##since this is a scalar
+            xtx <- as.numeric(crossprod(x)) ##since this is a scalar
             gamma <- t(x)%*%(Y - Z%*%B)/xtx
             if(ii > 1) {
                 if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
