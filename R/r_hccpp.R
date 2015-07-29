@@ -1,8 +1,4 @@
-r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL)
-  {
-
-    if(is.null(iter))
-      iter <- 100
+r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
 
     ## convergence criteria
     tol <- 1e-6
@@ -21,10 +17,10 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL)
     d2 <- ncol(Y)
 
     if(n1 != n2)
-      message('number of rows in F and Y must agree')
+        message('number of rows in F and Y must agree')
 
     if (k < 1 | lambda1 < 1e-6 | lambda2 < 1e-6 | lambda3 < 1e-6 )
-      message('lambda1, lambda2, lambda3 must be positive and/or k must be an integer')
+        message('lambda1, lambda2, lambda3 must be positive and/or k must be an integer')
 
 
     ##predefine for slight preformance improvement
@@ -32,11 +28,9 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL)
     diagZ <- diag(k)
     diagU <- diag(nrow(U))
 
-    if(iter > 0)
-      {
+    if(iter > 0) {
         o <- numeric(iter)
-        for(ii in 1:iter)
-          {
+        for(ii in 1:iter) {
             ##o[ii] <- norm(Y-Z%*%B, type="F") + norm(Z-F%*%U, type="F")*lambda1 + norm(B, type="F")*lambda2 + lambda3*norm(U, type="F")
             o[ii] <- sum((Y-x%*%gamma-Z%*%B)^2) + sum((Z-F%*%U)^2)*lambda1 + sum(B^2)*lambda2 + lambda3*sum(U^2)
 
@@ -53,15 +47,14 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL)
             U <- solve(crossprod(F) + diagU*(lambda3/lambda1), crossprod(F,Z))
 
             gamma <- solve(crossprod(x))%*% crossprod(x, Y - Z%*%B)
-                
-            if(ii > 1)
-              {
-                if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
-                  break
-              }
 
-          }
-      }
+            if(ii > 1) {
+                if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
+                    break
+            }
+
+        }
+    }
 
     ##erroro <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2)) + sum(sum((Z-F*U).^2))./sum(sum((F*U).^2))
     ##error1 <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2))
@@ -72,4 +65,4 @@ r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL)
     ##du <- (t(F)*F*lambda1 + lambda3*eye(size(U,1)))*U-lambda1*t(F)*Z
 
     list(Z=Z, B=B, U=U, o=o, gamma=gamma, iter=ii)
-  }
+}

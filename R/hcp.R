@@ -43,7 +43,7 @@
 ##' iter <- 100
 ##' ##and run
 ##' ##Rres <- hcp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
+hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
   {
     t0 <- proc.time()
     if(is.null(F)) {

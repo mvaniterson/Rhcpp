@@ -44,7 +44,7 @@
 ##' iter <- 100
 ##' ##and run
 ##' ##Rres <- hcpp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=NULL, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
+hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
     t0 <- proc.time()
     if(is.null(F)) {
         message("Assume only hidden components")
