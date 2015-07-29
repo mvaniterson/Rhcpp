@@ -105,6 +105,7 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
 
     Z <- res$Z
     B <- res$B
+    o <- res$o
     gamma <- res$g
     ##should I force x to have dim nx1?
     err <- as.vector(sqrt(colSums((Y - Z%*%B - x%*%gamma)^2)/(nrow(Y)-2)))
@@ -114,5 +115,5 @@ hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
 
-    return(list(Res = Y - Z%*%B, Cov=Z, B=B, gamma=as.vector(gamma), err=as.vector(err), pval=as.vector(pval), Y=Y, F=F))
+    return(list(Res = Y - Z%*%B, Cov=Z, B=B, o=o, gamma=as.vector(gamma), err=as.vector(err), pval=as.vector(pval), Y=Y, F=F))
 }
