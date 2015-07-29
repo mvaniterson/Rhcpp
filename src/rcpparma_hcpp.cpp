@@ -59,8 +59,8 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
           B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*Y);
           U = solve(F.t()*F*lambda1 + lambda3*diagU, lambda1*F.t()*Z);
         */
-        //o[ii] = accu(pow(Y-Z*B,2)) + accu(pow(Z-F*U,2))*lambda1 + accu(pow(B,2))*lambda2 + lambda3*accu(pow(U,2));
-        o[ii] = norm(Y-x*g-Z*B) + norm(Z-F*U)*lambda1 + norm(B)*lambda2 + lambda3*norm(U); //for matrices Frobenius norm is default p = 2 or p = "fro"
+        o[ii] = accu(pow(Y-x*g-Z*B,2)) + accu(pow(Z-F*U,2))*lambda1 + accu(pow(B,2))*lambda2 + accu(pow(U,2))*lambda3;
+        //o[ii] = norm(Y-x*g-Z*B) + norm(Z-F*U)*lambda1 + norm(B)*lambda2 + lambda3*norm(U); //for matrices Frobenius norm is default p = 2 or p = "fro"
         Z = ((Y - x*g)*B.t() + sqrt(lambda1)*F*U)*(B*B.t() + lambda1*diagB).i();
         B = solve(Z.t()*Z + lambda2*diagZ, Z.t()*(Y-x*g));
         U = solve(F.t()*F + (lambda3/lambda1)*diagU, F.t()*Z);
