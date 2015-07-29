@@ -6,7 +6,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, int k, int lambda1, int lambda2, int lambda3, int iter)
 {
-  double tol = 1e-9;
+  double tol = 1e-6;
   double xtx;
   int ii = 0;
   int n1 = Fr.nrow();
@@ -31,13 +31,16 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
 
   Rcpp::NumericVector unif = runif(k*d2);
   int cntr = 0;
-  for(int i=0; i<k; i++)
+  for(int i=0; i<k; i++) 
     for(int j=0; j<d2; j++)
       {
         //Br[i,j] = unif[cntr];
         //cntr += 1;
         Br[i,j] = (i+j)/(k*d2);
       }
+
+    for(int j=0; j<d2; j++)
+      gr[1,j] = 0;
 
   Rcpp::NumericVector o(iter);
 
