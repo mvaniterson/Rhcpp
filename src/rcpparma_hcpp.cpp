@@ -7,6 +7,7 @@ using namespace Rcpp;
 Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, int k, int lambda1, int lambda2, int lambda3, int iter)
 {
   double tol = 1e-9;
+  double xtx;
   int ii = 0;
   int n1 = Fr.nrow();
   int d1 = Fr.ncol();
