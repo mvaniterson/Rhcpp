@@ -1,68 +1,41 @@
-r_hcpp <- function(F, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
+r_hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
 
     ## convergence criteria
     tol <- 1e-6
 
-    U <- matrix(0, ncol(F), k)
-    Z <- matrix(0, nrow(F), k)
-    n <- k*ncol(Y)
-    ##B <- matrix(runif(n), ncol(Z), ncol(Y))
-    B <- matrix((1:n)/n, k, ncol(Y))
-    gamma <- matrix(0, 1, ncol(Y))
+    W <- matrix(0, nrow(Z), k)
+    A <- matrix(0, ncol(Z), k)    
+    g <- matrix(0, 1, ncol(Y))
+    
+    n <- k*ncol(Y)    
+    B <- matrix((1:n)/n, k, ncol(Y)) ##B <- matrix(runif(n), ncol(Z), ncol(Y))
 
-    n1 <- nrow(F)
-    d1 <- ncol(F)
-
-    n2 <- nrow(Y)
-    d2 <- ncol(Y)
-
-    if(n1 != n2)
+    if(nrow(Z) != nrow(Y))
         message('number of rows in F and Y must agree')
 
     if (k < 1 | lambda1 < 1e-6 | lambda2 < 1e-6 | lambda3 < 1e-6 )
         message('lambda1, lambda2, lambda3 must be positive and/or k must be an integer')
 
-
-    ##predefine for slight preformance improvement
-    diagB <- diag(k)
-    diagZ <- diag(k)
-    diagU <- diag(nrow(U))
-
+    ##predefine 
+    diagB <- diagW <- diag(k)    
+    diagA <- diag(nrow(A))
+    xtx <- as.numeric(crossprod(x)) ##since this is a scalar
+    
     if(iter > 0) {
         o <- numeric(iter)
         for(ii in 1:iter) {
-            ##o[ii] <- norm(Y-Z%*%B, type="F") + norm(Z-F%*%U, type="F")*lambda1 + norm(B, type="F")*lambda2 + lambda3*norm(U, type="F")
-            o[ii] <- sum((Y-x%*%gamma-Z%*%B)^2) + sum((Z-F%*%U)^2)*lambda1 + sum(B^2)*lambda2 + lambda3*sum(U^2)
-
-            ##Z <- (Y%*%t(B) + lambda1*F%*%U) %*% solve(B%*%t(B) + lambda1*diagB)
-            Z <- (tcrossprod(Y-x%*%gamma, B) + sqrt(lambda1)*F%*%U) %*% solve(tcrossprod(B) + lambda1*diagB)
-
-            ##B <- solve(t(Z)%*%Z + lambda2*diagZ, t(Z)%*%Y)
-            B <- solve(crossprod(Z) + lambda2*diagZ, crossprod(Z,Y-x%*%gamma))
-            ##can this be simplified??
-            ##B <- solve(crossprod(Z) + lambda2*diagZ)%*%crossprod(Z,Y)
-
-            ##U <- solve(t(F)%*%F*lambda1 + lambda3*diagU, lambda1*t(F)%*%Z)
-            ##U <- solve(crossprod(F)*lambda1 + lambda3*diagU, lambda1*crossprod(F,Z))
-            U <- solve(crossprod(F) + (lambda3/lambda1)*diagU, crossprod(F,Z))
+            o[ii] <- norm(Y-Z%*%B, type="F")^2 + lambda1*norm(Z-F%*%A, type="F")^2 + lambda2*norm(B, type="F")^2 + lambda3*norm(A, type="F")^2            
+            W <- (tcrossprod(Y-x%*%gamma, B) + lambda1*Z%*%A)%*%solve(tcrossprod(B) + lambda1*diagB)
+            B <- solve(crossprod(W) + lambda2*diagW, crossprod(W,Y-x%*%gamma))         
+            A <- solve(crossprod(F) + (lambda3/lambda1)*diagA, crossprod(F,Z))                       
+            g <- t(x)%*%(Y - Z%*%B)/xtx
             
-            ##gamma <- solve(crossprod(x))%*%t(x)%*%(Y - Z%*%B)
-            xtx <- as.numeric(crossprod(x)) ##since this is a scalar
-            gamma <- t(x)%*%(Y - Z%*%B)/xtx
             if(ii > 1) {
                 if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
                     break
             }
         }
     }
-
-    ##erroro <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2)) + sum(sum((Z-F*U).^2))./sum(sum((F*U).^2))
-    ##error1 <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2))
-    ##error2 <- sum(sum((Z-F*U).^2))./sum(sum((F*U).^2))
-
-    ##dz <- Z*(B*t(B) + lambda1*eye(size(B,1)))-(Y*t(B) + lambda1*F*U)
-    ##db <- (t(Z)*Z + lambda2*eye(size(Z,2)))*B - t(Z)*Y
-    ##du <- (t(F)*F*lambda1 + lambda3*eye(size(U,1)))*U-lambda1*t(F)*Z
-
-    list(Z=Z, B=B, U=U, o=o, gamma=gamma, iter=ii)
+    
+    list(W=W, B=B, A=A, o=o, g=g, iter=ii)
 }

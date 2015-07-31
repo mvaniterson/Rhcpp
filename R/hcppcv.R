@@ -44,32 +44,35 @@ hcppcv <- function(F, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), perfo
 
     par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
 
+    if(nrow(par) < bpworkers())
+        stop("Number of workers:", bpworkers(), "should be smaller then the number of models to fit:", nrow(par))
+
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
     init <- hcpp(F, Y, x, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
     resinit <- performance(init)
     estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
-    
-    if(verbose) 
+
+    if(verbose)
         message(paste0("Fitting all, ", nrow(par), ", models will approximately take: ", .sec2time(estimatedTime)))
 
     Y <- init$Y
     F <- init$F
     x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
-    
+
     map <- function(i) {
         k <- par$k[i]
         lambda1 <- par$lambda1[i]
         lambda2 <- par$lambda2[i]
         lambda3 <- par$lambda3[i]
-        message(paste("optimizing k =", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
+        message(paste("optimizing k = ", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
 
         res <- hcpp(F, Y, x, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
         performance(res)
     }
-    
+
     gc() ##reduce memory footprint before running in parallel
-    
+
     res <- bplapply(2:nrow(par), map)
     res <- c(resinit, unlist(res))
     names(res) <- apply(par, 1, paste0, collapse=":")

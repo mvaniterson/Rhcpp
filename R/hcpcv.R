@@ -42,6 +42,9 @@ hcpcv <- function(F, Y, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performan
 
     par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
 
+    if(nrow(par) < bpworkers())
+        stop("Number of workers:", bpworkers(), "should be smaller then the number of models to fit:", nrow(par))
+    
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
     init <- hcp(F, Y, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
