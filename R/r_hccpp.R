@@ -28,7 +28,7 @@ r_hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
             W <- (tcrossprod(Y-x%*%g, B) + lambda1*Z%*%A)%*%solve(tcrossprod(B) + lambda1*diagB)
             B <- solve(crossprod(W) + lambda2*diagW, crossprod(W,Y-x%*%g))         
             A <- solve(crossprod(Z) + (lambda3/lambda1)*diagA, crossprod(Z,W))                       
-            g <- xtxinvxt%*%(Y - W%*%B)/xtx
+            g <- xtxinvxt%*%(Y - W%*%B)
             
             if(ii > 1) {
                 if((abs(o[ii] - o[ii-1])/o[ii]) < tol)
