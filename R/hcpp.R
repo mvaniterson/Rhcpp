@@ -109,7 +109,7 @@ hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     g <- res$g
     ##should I force x to have dim nx1?
     err <- as.vector(sqrt(colSums((Y - x%*%g - W%*%B)^2)/(nrow(Y)-2)))
-    pval <- 2*pnorm(-abs(gamma/err)) ##approximation to t; n is usually large enough
+    pval <- 2*pnorm(-abs(g/err)) ##approximation to t; n is usually large enough
     names(pval) <- colnames(Y)
 
     if(verbose)
