@@ -52,13 +52,5 @@ r_hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=100) {
         }
     }
 
-    ##erroro <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2)) + sum(sum((Z-F*U).^2))./sum(sum((F*U).^2))
-    ##error1 <- sum(sum((Y-Z*B).^2))./sum(sum(Y.^2))
-    ##error2 <- sum(sum((Z-F*U).^2))./sum(sum((F*U).^2))
-
-    ##dz <- Z*(B*t(B) + lambda1*eye(size(B,1)))-(Y*t(B) + lambda1*F*U)
-    ##db <- (t(Z)*Z + lambda2*eye(size(Z,2)))*B - t(Z)*Y
-    ##du <- (t(F)*F*lambda1 + lambda3*eye(size(U,1)))*U-lambda1*t(F)*Z
-
     list(Z=Z, B=B, U=U, o=o, iter=ii)
 }

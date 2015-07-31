@@ -101,7 +101,7 @@ hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     }
 
     if(verbose)
-        message(paste("Finished after", res$iter, "iterations of", iter, "iterations."))
+        message(paste("Finished after", res$niter, "iterations of", iter, "iterations."))
 
     W <- res$W
     B <- res$B
