@@ -37,5 +37,5 @@ r_hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
         }
     }
     
-    list(W=W, B=B, A=A, o=o, g=g, iter=ii)
+    list(W=W, B=B, A=A, o=o, g=g, niter=ii)
 }
