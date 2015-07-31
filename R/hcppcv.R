@@ -50,8 +50,8 @@ hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), perfo
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
     init <- hcpp(Z, Y, x, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
-    resinit <- performance(init)
-    estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
+    resinit <- performance(init)    
+    estimatedTime <- nrow(par)*(50/init$niter)*(proc.time() - t0)[3]/bpworkers()
 
     if(verbose)
         message(paste0("Fitting all, ", nrow(par), ", models will approximately take: ", .sec2time(estimatedTime)))
