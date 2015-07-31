@@ -4,7 +4,7 @@
 ##' with a used-defined performance function
 ##'
 ##' @title Perform the HCP normalization algorithm on a grid of model parameters
-##' @param F a matrix nxd of known covariates, where n is the number of
+##' @param Z a matrix nxd of known covariates, where n is the number of
 ##' subjects and d is the number of known covariates. *must be standardize
 ##' (columns have 0 mean and constant SS).
 ##' @param Y a matrix of nxg of expression data (must be standardized (columns
@@ -37,7 +37,7 @@
 ##' res <- hcppcv(F, Y, x, kRange, lambdaRange, performance=function(res) sum(res$Res))
 ##' res
 ##' }
-hcppcv <- function(F, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
+hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
 
     if(is.null(performance))
         stop("A model performance function that accepts the output of hcp should be provided!")
@@ -49,7 +49,7 @@ hcppcv <- function(F, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), perfo
 
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
-    init <- hcpp(F, Y, x, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+    init <- hcpp(Z, Y, x, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
     resinit <- performance(init)
     estimatedTime <- nrow(par)*(proc.time() - t0)[3]/bpworkers()
 
@@ -57,7 +57,7 @@ hcppcv <- function(F, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), perfo
         message(paste0("Fitting all, ", nrow(par), ", models will approximately take: ", .sec2time(estimatedTime)))
 
     Y <- init$Y
-    F <- init$F
+    Z <- init$Z
     x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
 
     map <- function(i) {
@@ -67,7 +67,7 @@ hcppcv <- function(F, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), perfo
         lambda3 <- par$lambda3[i]
         message(paste("optimizing k = ", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
 
-        res <- hcpp(F, Y, x, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
+        res <- hcpp(Z, Y, x, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
         performance(res)
     }
 
