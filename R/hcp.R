@@ -12,7 +12,7 @@
 ##' evaluating the "performance" of the  resulting residual data on a desired
 ##' task. typically, if lambda>5, then hidden factors match the known covariates closely.
 ##' @title R/Rcpp implementation of the HCP algorithm
-##' @param F a matrix nxd of known covariates, where n is the number of
+##' @param Z a matrix nxd of known covariates, where n is the number of
 ##' subjects and d is the number of known covariates. *must be standardize
 ##' (columns have 0 mean and constant SS).
 ##' @param Y a matrix of nxg of expression data (must be standardized (columns
@@ -42,20 +42,20 @@
 ##' lambda3 <- 1
 ##' iter <- 100
 ##' ##and run
-##' ##Rres <- hcp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
+##' ##Rres <- hcp(Z, Y, k, lambda1, lambda2, lambda3, iter)
+hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE)
   {
     t0 <- proc.time()
-    if(is.null(F)) {
+    if(is.null(Z)) {
         message("Assume only hidden components")
-        F <- matrix(runif(2*nrow(Y), 1, 10), nrow=nrow(Y), ncol=2)
+        Z <- matrix(runif(2*nrow(Y), 1, 10), nrow=nrow(Y), ncol=2)
         lambda3 <- 0 ##do not penalized the coefficients with an effect on the known covariates
     }
     ## (0) check dimensions
-    if(nrow(Y) != nrow(F))
-      stop("Rows represent the samples for both Y and F!")
+    if(nrow(Y) != nrow(Z))
+      stop("Rows represent the samples for both Y and Z!")
 
-    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0)
+    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0)
       stop("NA's in input data are not allowed!")
 
     ## (1) take log of read counts
@@ -80,11 +80,11 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TR
     if(stand) {
       message("Standardize data...")
       Y <- standardize(Y)
-      F <- standardize(F)
+      Z <- standardize(Z)
     }
 
-    if(sum(is.na(F)) > 0 | sum(is.na(Y)) > 0) {        
-      message(paste("Row(s) (F):", paste(which(apply(F, 1, function(x) any(is.na(x)))), collapse=", ")))
+    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0) {        
+      message(paste("Row(s) (Z):", paste(which(apply(Z, 1, function(x) any(is.na(x)))), collapse=", ")))
       message(paste("Row(s) (Y):", paste(which(apply(Y, 1, function(x) any(is.na(x)))), collapse=", ")))
       stop("NA's introduced by the standardization these are not allowed!")
      }
@@ -92,22 +92,22 @@ hcp <- function(F, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TR
     ## (3) HCP
     if(fast) {
       message("Run RcppArmadillo implemented HCP algorithm...")
-      res <- rcpparma_hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
+      res <- rcpparma_hcp(Z, Y, k, lambda1, lambda2, lambda3, iter)
     }
     else
       {
         message("Run plain R implemented HCP algorithm...")
-        res <- r_hcp(F, Y, k, lambda1, lambda2, lambda3, iter)
+        res <- r_hcp(Z, Y, k, lambda1, lambda2, lambda3, iter)
       }
 
     if(verbose)
       message(paste("Finished after", res$iter, "iterations of", iter, "iterations."))
 
-    Z <- res$Z
+    W <- res$W
     B <- res$B
     
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
     
-    return(list(Res = Y - Z%*%B, Cov=Z, B=B, Y=Y, F=F))
+    return(list(Res = Y - W%*%B, Cov=Z, B=B, Y=Y, Z=Z))
   }

@@ -24,7 +24,7 @@ r_hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100) {
     if(iter > 0) {
         o <- numeric(iter)
         for(ii in 1:iter) {
-            o[ii] <- norm(Y-x%*%g- W%*%B, type="F")^2 + lambda1*norm(W-Z%*%A, type="F")^2 + lambda2*norm(B, type="F")^2 + lambda3*norm(A, type="F")^2            
+            o[ii] <- norm(Y- x%*%g- W%*%B, type="F")^2 + lambda1*norm(W-Z%*%A, type="F")^2 + lambda2*norm(B, type="F")^2 + lambda3*norm(A, type="F")^2            
             W <- (tcrossprod(Y-x%*%g, B) + lambda1*Z%*%A)%*%solve(tcrossprod(B) + lambda1*diagB)
             B <- solve(crossprod(W) + lambda2*diagW, crossprod(W,Y-x%*%g))         
             A <- solve(crossprod(Z) + (lambda3/lambda1)*diagA, crossprod(Z,W))                       
