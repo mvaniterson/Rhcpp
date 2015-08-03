@@ -25,7 +25,7 @@ r_hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100) {
     diagB <- diag(k)
     diagW <- diag(k)
     diagA <- diag(nrow(A))
-    U1 <- lambda1*solve(lambda1*crossprod(Z) + diagA*lambda3))%*%t(Z)
+    U1 <- lambda1*solve(lambda1*crossprod(Z) + diagA*lambda3)%*%t(Z)
 
     if(iter > 0) {
         o <- numeric(iter)
