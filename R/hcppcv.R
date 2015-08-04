@@ -37,12 +37,16 @@
 ##' res <- hcppcv(F, Y, x, kRange, lambdaRange, performance=function(res) sum(res$Res))
 ##' res
 ##' }
-hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
+hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), lambda1Range=NULL, lambda2Range=NULL, lambda3Range=NULL,
+                   performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
 
     if(is.null(performance))
         stop("A model performance function that accepts the output of hcp should be provided!")
 
-    par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
+    if(!is.null(lambda1Range) & !is.null(lambda2Range) & !is.null(lambda3Range))
+        par <- expand.grid(k=kRange, lambda1=lambda1Range, lambda2=lambda2Range, lambda3=lambda3Range)
+    else    
+        par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
 
     if(nrow(par) < bpworkers())
         stop("Number of workers:", bpworkers(), "should be smaller then the number of models to fit:", nrow(par))
