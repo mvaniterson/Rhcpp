@@ -37,7 +37,7 @@
 ##' res <- hcppcv(F, Y, x, kRange, lambdaRange, performance=function(res) sum(res$Res))
 ##' res
 ##' }
-hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=c(1, 5, 10, 20), lambda1Range=NULL, lambda2Range=NULL, lambda3Range=NULL,
+hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NULL, lambda2Range=NULL, lambda3Range=NULL,
                    performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
 
     if(is.null(performance))
