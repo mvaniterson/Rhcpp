@@ -52,7 +52,7 @@ hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
         lambda3 <- 0 ##do not penalized the coefficients with an effect on the known covariates
     }
     ## (0) check dimensions
-    if(nrow(Y) != nrow(Z) | nrow(Y) != nrow(X)))
+    if(nrow(Y) != nrow(Z) | nrow(Y) != nrow(X))
         stop("Rows represent the samples for both Y, Z and X!")
 
     if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(X)) > 0)
