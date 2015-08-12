@@ -106,14 +106,15 @@ hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     B <- res$B
     o <- res$o
     G <- res$G
+    g <- as.vector(G[,1])
     niter <- res$niter
-    err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y)- ncol(W) - 2)))
+    err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y)- ncol(W) - ncol(X) - 1)))
     ##by default inference on first column of X
-    pval <- 2*pnorm(-abs(G[,1]/err)) ##approximation to t; n is usually large enough
+    pval <- 2*pnorm(-abs(g/err)) ##approximation to t; n is usually large enough
     names(pval) <- colnames(Y)
 
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
 
-    return(list(Res = Y - X%*%G - W%*%B, Cov=W, B=B, o=o, gamma=as.vector(G[,1]), err=as.vector(err), pval=as.vector(pval), Y=Y, Z=Z, X=X, niter=niter))
+    return(list(Res = Y - X%*%G - W%*%B, Cov=W, B=B, o=o, gamma=g, err=as.vector(err), pval=as.vector(pval), Y=Y, Z=Z, X=X, niter=niter))
 }
