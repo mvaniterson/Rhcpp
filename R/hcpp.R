@@ -106,7 +106,7 @@ hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     B <- res$B
     o <- res$o
     G <- res$G
-    g <- as.vector(G[,1])
+    g <- as.vector(G[1,])
     niter <- res$niter
     err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y)- ncol(W) - ncol(X) - 1)))
     ##by default inference on first column of X
