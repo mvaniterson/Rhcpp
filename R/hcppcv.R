@@ -9,7 +9,7 @@
 ##' (columns have 0 mean and constant SS).
 ##' @param Y a matrix of nxg of expression data (must be standardized (columns
 ##' scaled to have constant SS and mean 0). ** use standardize function to standardize F and Y.
-##' @param x vector of responses.
+##' @param X vector of responses.
 ##' @param kRange multiple numbers of inferred hidden components (k is an integer)
 ##' @param lambdaRange multiple model parameters
 ##' @param iter (optional) iter: number of iterations (default = 100);
@@ -34,10 +34,10 @@
 ##' ## we do not have response for this data
 ##' x <- rnorm(nrol(Y))
 ##' ##not really meaning full performance function
-##' res <- hcppcv(F, Y, x, kRange, lambdaRange, performance=function(res) sum(res$Res))
+##' res <- hcppcv(F, Y, X, kRange, lambdaRange, performance=function(res) sum(res$Res))
 ##' res
 ##' }
-hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NULL, lambda2Range=NULL, lambda3Range=NULL,
+hcppcv <- function(Z, Y, X, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NULL, lambda2Range=NULL, lambda3Range=NULL,
                    performance=NULL, iter=100, stand=TRUE, log=TRUE, verbose=TRUE, fast=TRUE) {
 
     if(is.null(performance))
@@ -53,7 +53,7 @@ hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
 
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
-    init <- hcpp(Z, Y, x, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+    init <- hcpp(Z, Y, X, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
     resinit <- performance(init)    
     estimatedTime <- (sum(par$k[-1])/par$k[1])*(50/init$niter)*(proc.time() - t0)[3]/bpworkers()
 
@@ -62,7 +62,7 @@ hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
 
     Y <- init$Y
     Z <- init$Z
-    x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
+    X <- init$X
 
     map <- function(i) {
         k <- par$k[i]
@@ -71,7 +71,7 @@ hcppcv <- function(Z, Y, x, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
         lambda3 <- par$lambda3[i]
         message(paste("optimizing k = ", k, "lambda1 = ", lambda1, "lambda2 = ", lambda2, "lambda3 = ", lambda3))
 
-        res <- hcpp(Z, Y, x, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
+        res <- hcpp(Z, Y, X, k = k, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3, iter=iter, stand=FALSE, log=FALSE, verbose=verbose, fast=fast)
         performance(res)
     }
 

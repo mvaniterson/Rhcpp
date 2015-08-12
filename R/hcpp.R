@@ -17,7 +17,7 @@
 ##' (columns have 0 mean and constant SS).
 ##' @param Y a matrix of nxg of expression data (must be standardized (columns
 ##' scaled to have constant SS and mean 0). ** use standardize function to standardize F and Y.
-##' @param x vector of responses.
+##' @param X vector of responses.
 ##' @param k  number of inferred hidden components (k is an integer)
 ##' @param lambda1 model parameter 1
 ##' @param lambda2 model parameter 2
@@ -44,22 +44,20 @@
 ##' iter <- 100
 ##' ##and run
 ##' ##Rres <- hcpp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
+hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
     t0 <- proc.time()
-    if(is.null(F)) {
+    if(is.null(Z)) {
         message("Assume only hidden components")
         Z <- matrix(runif(2*nrow(Y), 1, 10), nrow=nrow(Y), ncol=2)
         lambda3 <- 0 ##do not penalized the coefficients with an effect on the known covariates
     }
     ## (0) check dimensions
-    if(nrow(Y) != nrow(Z))
-        stop("Rows represent the samples for both Y and F!")
+    if(nrow(Y) != nrow(Z) | nrow(Y) != nrow(X)))
+        stop("Rows represent the samples for both Y, Z and X!")
 
-    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0)
+    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(X)) > 0)
         stop("NA's in input data are not allowed!")
-
-    x <- matrix(x, ncol=1)
-    
+ 
     ## (1) take log of read counts
     if(log) {
         message("Log-transformation data...")
@@ -81,23 +79,24 @@ hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
         message("Standardize data...")
         Y <- standardize(Y)
         Z <- standardize(Z)
-        x <- (x - mean(x))/sqrt(sum((x - mean(x))^2))
+        X <- standardize(X)
     }
 
-    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(x)) > 0) {
+    if(sum(is.na(Z)) > 0 | sum(is.na(Y)) > 0 | sum(is.na(X)) > 0) {
         message(paste("Row(s) (Z):", paste(which(apply(Z, 1, function(x) any(is.na(x)))), collapse=", ")))
         message(paste("Row(s) (Y):", paste(which(apply(Y, 1, function(x) any(is.na(x)))), collapse=", ")))
+        message(paste("Row(s) (X):", paste(which(apply(X, 1, function(x) any(is.na(x)))), collapse=", ")))
         stop("NA's introduced by the standardization these are not allowed!")
     }
 
     ## (3) HCP
     if(fast) {
         message("Run RcppArmadillo implemented HCP algorithm...")
-        res <- rcpparma_hcpp(Z, Y, x, k, lambda1, lambda2, lambda3, iter)
+        res <- rcpparma_hcpp(Z, Y, X, k, lambda1, lambda2, lambda3, iter)
     }
     else {
         message("Run plain R implemented HCP algorithm...")
-        res <- r_hcpp(Z, Y, x, k, lambda1, lambda2, lambda3, iter)
+        res <- r_hcpp(Z, Y, X, k, lambda1, lambda2, lambda3, iter)
     }
 
     if(verbose)
@@ -106,15 +105,15 @@ hcpp <- function(Z, Y, x, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     W <- res$W
     B <- res$B
     o <- res$o
-    g <- res$g
+    G <- res$G
     niter <- res$niter
-    ##should I force x to have dim nx1?
-    err <- as.vector(sqrt(colSums((Y - x%*%g - W%*%B)^2)/(nrow(Y)- ncol(W) - 2)))
-    pval <- 2*pnorm(-abs(g/err)) ##approximation to t; n is usually large enough
+    err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y)- ncol(W) - 2)))
+    ##by default inference on first column of X
+    pval <- 2*pnorm(-abs(G[,1]/err)) ##approximation to t; n is usually large enough
     names(pval) <- colnames(Y)
 
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
 
-    return(list(Res = Y - W%*%B, Cov=W, B=B, o=o, gamma=as.vector(g), err=as.vector(err), pval=as.vector(pval), Y=Y, Z=Z, niter=niter))
+    return(list(Res = Y - X%*%G - W%*%B, Cov=W, B=B, o=o, gamma=as.vector(G[,1]), err=as.vector(err), pval=as.vector(pval), Y=Y, Z=Z, X=X, niter=niter))
 }

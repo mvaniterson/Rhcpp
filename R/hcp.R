@@ -109,5 +109,5 @@ hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TR
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
     
-    return(list(Res = Y - W%*%B, Cov=Z, B=B, Y=Y, Z=Z))
+    return(list(Res = Y - W%*%B, W=W, B=B, Y=Y, Z=Z))
   }
