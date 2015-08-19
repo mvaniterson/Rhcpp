@@ -3,8 +3,7 @@ r_hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100) {
     ## convergence criteria
     tol <- 1e-6
 
-    W <- matrix(0, nrow(Z), k)
-    diag(W) <- 1 ##make invertable
+    W <- matrix(0, nrow(Z), k)    
     A <- matrix(0, ncol(Z), k)
     G <- matrix(0, ncol(X), ncol(Y))
 
@@ -21,14 +20,11 @@ r_hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100) {
     diagB <- diagW <- diag(k)
     diagA <- diag(nrow(A))
 
-    E <- W
-    diag(E) <- 0.01
-
     if(iter > 0) {
         o <- numeric(iter)
         for(ii in 1:iter) {
             o[ii] <- norm(Y-X%*%G-W%*%B, type="F")^2 + lambda1*norm(W-Z%*%A, type="F")^2 + lambda2*norm(B, type="F")^2 + lambda3*norm(A, type="F")^2
-            W <- (tcrossprod(Y-X%*%G, B) + lambda1*Z%*%A)%*%solve(tcrossprod(B) + lambda1*diagB) + E ##keep invertible during iteration
+            W <- (tcrossprod(Y-X%*%G, B) + lambda1*Z%*%A)%*%solve(tcrossprod(B) + lambda1*diagB)
             B <- solve(crossprod(W) + lambda2*diagW, crossprod(W,Y-X%*%G))
             A <- solve(crossprod(Z) + (lambda3/lambda1)*diagA, crossprod(Z,W))
             G <- solve(crossprod(X), crossprod(X, Y-W%*%B))
