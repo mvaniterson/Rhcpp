@@ -4,6 +4,7 @@ r_hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100) {
 
     A <- matrix(0, ncol(Z), k)
     W <- matrix(0, nrow(Z), k)
+    diag(W) <- 1
     n <- k*ncol(Y)
     ##B <- matrix(runif(n), ncol(Z), ncol(Y))
     B <- matrix((1:n)/n, k, ncol(Y))
@@ -19,7 +20,6 @@ r_hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100) {
 
     if (k < 1 | lambda1 < 0 | lambda2 < 0 | lambda3 < 0 )
         message('lambda1, lambda2, lambda3 must be positive and/or k must be an integer')
-
 
     ##predefine for slight preformance improvement
     diagB <- diag(k)
