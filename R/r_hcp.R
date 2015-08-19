@@ -17,7 +17,7 @@ r_hcp <- function(Z, Y, k, lambda1, lambda2, lambda3, iter=100) {
     if(n1 != n2)
         message('number of rows in F and Y must agree')
 
-    if (k < 1 | lambda1 < 1e-6 | lambda2 < 1e-6 | lambda3 < 1e-6 )
+    if (k < 1 | lambda1 < 0 | lambda2 < 0 | lambda3 < 0 )
         message('lambda1, lambda2, lambda3 must be positive and/or k must be an integer')
 
 
