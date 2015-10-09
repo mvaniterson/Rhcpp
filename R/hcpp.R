@@ -27,6 +27,7 @@
 ##' @param log default log-transformation TRUE
 ##' @param fast default use fast RcppArmadillo implementation
 ##' @param verbose default TRUE
+##' @param tol 1e-6 stopping criterium relative difference objective function
 ##' @return list
 ##' Z: matrix of hidden components, dimensionality: nxk,
 ##' B: matrix of effects of hidden components, dimensionality: kxg,
@@ -44,7 +45,8 @@
 ##' iter <- 100
 ##' ##and run
 ##' ##Rres <- hcpp(Y, F, k, lambda1, lambda2, lambda3, iter)
-hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE) {
+hcpp <- function(Z, Y, X, k, lambda1=NULL, lambda2=NULL, lambda3=NULL, iter=100, stand=TRUE, log=TRUE, fast=TRUE, verbose=TRUE, tol=1e-6) {
+        
     t0 <- proc.time()
     if(is.null(Z)) {
         message("Assume only hidden components")
@@ -93,10 +95,14 @@ hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     if(fast) {
         message("Run RcppArmadillo implemented HCP algorithm...")
         res <- rcpparma_hcpp(Z, Y, X, k, lambda1, lambda2, lambda3, iter)
+        ##no hcpp1 Rcpp implementation yet!
     }
     else {
         message("Run plain R implemented HCP algorithm...")
-        res <- r_hcpp(Z, Y, X, k, lambda1, lambda2, lambda3, iter)
+        if(!is.null(lambda1) & !is.null(lambda2) & !is.null(lambda3))
+            res <- r_hcpp3(Z, Y, X, k, lambda1, lambda2, lambda3, iter, verbose, tol)
+        else if(!is.null(lambda1) & is.null(lambda2) & is.null(lambda3))
+            res <- r_hcpp1(Z, Y, X, k, lambda1, iter, verbose, tol)
     }
 
     if(verbose)
@@ -108,13 +114,20 @@ hcpp <- function(Z, Y, X, k, lambda1, lambda2, lambda3, iter=100, stand=TRUE, lo
     G <- res$G
     g <- as.vector(G[1,])
     niter <- res$niter
-    err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y)- ncol(W) - ncol(X) - 1)))
-    ##by default inference on first column of X
-    pval <- 2*pnorm(-abs(g/err)) ##approximation to t; n is usually large enough
-    names(pval) <- colnames(Y)
+
+    ##summary statistics
+    err <- as.vector(sqrt(colSums((Y - X%*%G - W%*%B)^2)/(nrow(Y) - ncol(W) - ncol(X) - 1))) ##xtx = 1 because of the standarization
+
+    ##optionally use robust standard errors!
+    ##U <- colSums((Y - X%*%G - W%*%B)^2) ##residuals    
+    ##rerr <- as.vector(sqrt(crossprod(U%*%X)/crossprod(X))) ##robust standard errors for gamma
+        
+    tstat <- g/err
+    pval <- 2*pnorm(-abs(g/err))    
+    names(tstat) <- names(pval) <- colnames(Y)
 
     if(verbose)
         message(paste("The batch correction took:", round((proc.time() - t0)[3], 2), "seconds."))
 
-    return(list(Res = Y - X%*%G - W%*%B, Cov=W, B=B, o=o, gamma=g, err=as.vector(err), pval=as.vector(pval), Y=Y, Z=Z, X=X, niter=niter))
+    return(list(Res = Y - X%*%G - W%*%B, Cov=W, B=B, o=o, gamma=g, err=err, tstat=tstat, pval=pval, Y=Y, Z=Z, X=X, niter=niter))
 }

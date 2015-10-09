@@ -4,11 +4,11 @@
 \alias{hcp}
 \title{R/Rcpp implementation of the HCP algorithm}
 \usage{
-hcp(F, Y, k, lambda1, lambda2, lambda3, iter = NULL, stand = TRUE,
+hcp(Z, Y, k, lambda1, lambda2, lambda3, iter = 100, stand = TRUE,
   log = TRUE, fast = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{F}{a matrix nxd of known covariates, where n is the number of
+\item{Z}{a matrix nxd of known covariates, where n is the number of
 subjects and d is the number of known covariates. *must be standardize
 (columns have 0 mean and constant SS).}
 
@@ -65,7 +65,7 @@ lambda2 <- 1
 lambda3 <- 1
 iter <- 100
 ##and run
-##Rres <- hcp(Y, F, k, lambda1, lambda2, lambda3, iter)
+##Rres <- hcp(Z, Y, k, lambda1, lambda2, lambda3, iter)
 }
 \author{
 mvaniterson

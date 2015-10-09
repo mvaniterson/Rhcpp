@@ -1,8 +1,8 @@
 useDynLib(Rhcpp)
 importFrom(Rcpp, evalCpp)
 importFrom(BiocParallel, bplapply, bpworkers)
-export("hcp")
-export("hcpcv")
-export("hcpp")
-export("hcppcv")
+importFrom(ellipse, ellipse)
+export("hcp", "hcpcv", "hcpp", "hcppcv")
+export("rnormmix", "dnormmix", "plotnormmix")
+export("gibbssampler", "plotTraces", "plotCI")
 

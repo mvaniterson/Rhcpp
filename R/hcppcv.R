@@ -12,6 +12,9 @@
 ##' @param X vector of responses.
 ##' @param kRange multiple numbers of inferred hidden components (k is an integer)
 ##' @param lambdaRange multiple model parameters
+##' @param lambda1Range multiple model parameters
+##' @param lambda2Range multiple model parameters
+##' @param lambda3Range multiple model parameters
 ##' @param iter (optional) iter: number of iterations (default = 100);
 ##' @param stand default standardize data TRUE
 ##' @param log default log-transformation TRUE
@@ -53,7 +56,7 @@ hcppcv <- function(Z, Y, X, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
 
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
-    init <- hcpp(Z, Y, X, k = par$k[1], lambda1 =  par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
+    init <- hcpp(Z, Y, X, k = par$k[1], lambda1 = par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
     resinit <- performance(init)    
     estimatedTime <- (sum(par$k[-1])/par$k[1])*(50/init$niter)*(proc.time() - t0)[3]/bpworkers()
 

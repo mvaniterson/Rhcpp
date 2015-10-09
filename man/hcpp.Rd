@@ -4,18 +4,19 @@
 \alias{hcpp}
 \title{R/Rcpp implementation of the HCP algorithm}
 \usage{
-hcpp(F, Y, x, k, lambda1, lambda2, lambda3, iter = NULL, stand = TRUE,
-  log = TRUE, fast = TRUE, verbose = TRUE)
+hcpp(Z, Y, X, k, lambda1 = NULL, lambda2 = NULL, lambda3 = NULL,
+  iter = 100, stand = TRUE, log = TRUE, fast = TRUE, verbose = TRUE,
+  tol = 1e-06)
 }
 \arguments{
-\item{F}{a matrix nxd of known covariates, where n is the number of
+\item{Z}{a matrix nxd of known covariates, where n is the number of
 subjects and d is the number of known covariates. *must be standardize
 (columns have 0 mean and constant SS).}
 
 \item{Y}{a matrix of nxg of expression data (must be standardized (columns
 scaled to have constant SS and mean 0). ** use standardize function to standardize F and Y.}
 
-\item{x}{vector of responses.}
+\item{X}{vector of responses.}
 
 \item{k}{number of inferred hidden components (k is an integer)}
 
@@ -34,6 +35,8 @@ scaled to have constant SS and mean 0). ** use standardize function to standardi
 \item{fast}{default use fast RcppArmadillo implementation}
 
 \item{verbose}{default TRUE}
+
+\item{tol}{1e-6 stopping criterium relative difference objective function}
 }
 \value{
 list

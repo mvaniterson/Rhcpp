@@ -4,12 +4,12 @@
 \alias{hcpcv}
 \title{Perform the HCP normalization algorithm on a grid of model parameters}
 \usage{
-hcpcv(F, Y, kRange = c(10, 20), lambdaRange = c(1, 5, 10, 20),
+hcpcv(Z, Y, kRange = c(10, 20), lambdaRange = c(1, 5, 10, 20),
   performance = NULL, iter = 100, stand = TRUE, log = TRUE,
   verbose = TRUE, fast = TRUE)
 }
 \arguments{
-\item{F}{a matrix nxd of known covariates, where n is the number of
+\item{Z}{a matrix nxd of known covariates, where n is the number of
 subjects and d is the number of known covariates. *must be standardize
 (columns have 0 mean and constant SS).}
 
@@ -53,7 +53,7 @@ data(rhcppdata)
 F <- rhcppdata$F
 Y <- rhcppdata$Y
 ##not really meaning full performance function
-res <- hcppcv(F, Y, kRange, lambdaRange, performance=function(res) sum(res$Res))
+res <- hcppcv(Z, Y, kRange, lambdaRange, performance=function(res) sum(res$Res))
 hist(res)
 which.min(res)
 }

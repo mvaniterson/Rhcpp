@@ -4,23 +4,30 @@
 \alias{hcppcv}
 \title{Perform the HCP normalization algorithm on a grid of model parameters}
 \usage{
-hcppcv(F, Y, x, kRange = c(10, 20), lambdaRange = c(1, 5, 10, 20),
+hcppcv(Z, Y, X, kRange = c(10, 20), lambdaRange = NULL,
+  lambda1Range = NULL, lambda2Range = NULL, lambda3Range = NULL,
   performance = NULL, iter = 100, stand = TRUE, log = TRUE,
   verbose = TRUE, fast = TRUE)
 }
 \arguments{
-\item{F}{a matrix nxd of known covariates, where n is the number of
+\item{Z}{a matrix nxd of known covariates, where n is the number of
 subjects and d is the number of known covariates. *must be standardize
 (columns have 0 mean and constant SS).}
 
 \item{Y}{a matrix of nxg of expression data (must be standardized (columns
 scaled to have constant SS and mean 0). ** use standardize function to standardize F and Y.}
 
-\item{x}{vector of responses.}
+\item{X}{vector of responses.}
 
 \item{kRange}{multiple numbers of inferred hidden components (k is an integer)}
 
 \item{lambdaRange}{multiple model parameters}
+
+\item{lambda1Range}{multiple model parameters}
+
+\item{lambda2Range}{multiple model parameters}
+
+\item{lambda3Range}{multiple model parameters}
 
 \item{performance}{function accepting res with res$Res the transformed Residuals}
 
@@ -57,7 +64,7 @@ Y <- rhcppdata$Y
 ## we do not have response for this data
 x <- rnorm(nrol(Y))
 ##not really meaning full performance function
-res <- hcppcv(F, Y, x, kRange, lambdaRange, performance=function(res) sum(res$Res))
+res <- hcppcv(F, Y, X, kRange, lambdaRange, performance=function(res) sum(res$Res))
 res
 }
 }
