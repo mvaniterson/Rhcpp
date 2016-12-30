@@ -49,7 +49,7 @@ hcppcv <- function(Z, Y, X, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
     if(!is.null(lambda1Range) & !is.null(lambda2Range) & !is.null(lambda3Range))
         par <- expand.grid(k=kRange, lambda1=lambda1Range, lambda2=lambda2Range, lambda3=lambda3Range)
     else    
-        par <- expand.grid(k=kRange, lambda1=lambdaRange, lambda2=lambdaRange, lambda3=lambdaRange)
+        par <- expand.grid(k=kRange, lambda1=lambdaRange)
 
     if(nrow(par) < bpworkers())
         stop("Number of workers:", bpworkers(), "should be smaller then the number of models to fit:", nrow(par))
@@ -57,8 +57,10 @@ hcppcv <- function(Z, Y, X, kRange=c(10, 20), lambdaRange=NULL, lambda1Range=NUL
     ##initial run perform log-transformation and standarization only once if necessary
     t0 <- proc.time()
     init <- hcpp(Z, Y, X, k = par$k[1], lambda1 = par$lambda1[1], lambda2 = par$lambda2[1], lambda3 = par$lambda3[1], iter=iter, stand=stand, log=log, verbose=verbose, fast=fast)
-    resinit <- performance(init)    
-    estimatedTime <- (sum(par$k[-1])/par$k[1])*(50/init$niter)*(proc.time() - t0)[3]/bpworkers()
+    
+    resinit <- performance(init)
+    
+    estimatedTime <- (sum(par$k[-1])/par$k[1])*(0.5*iter/init$niter)*(proc.time() - t0)[3]/bpworkers()
 
     if(verbose)
         message(paste0("Fitting all, ", nrow(par), ", models will approximately take: ", .sec2time(estimatedTime)))

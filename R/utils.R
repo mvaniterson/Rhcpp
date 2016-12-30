@@ -31,3 +31,21 @@
     return(z)
 }
 
+##' Perform fixed meta-analysis
+##'
+##' Perform fixed meta-analysis on matrices containing effect-sizes and standard errors
+##' assuming studies in columns and features in rows
+##' @title fixed meta-analysis
+##' @param E matrix of effect sizes
+##' @param V matrix of standard errors
+##' @return vector of p-values
+##' @author mvaniterson
+##' @export
+fixed.meta <- function(E, V){
+    W <- 1/V^2
+    V <- 1/rowSums(W)
+    T <- rowSums(E*W)*V
+    Z <- T/sqrt(V)
+    P <- 2*pnorm(-abs(Z))
+    invisible(P)
+}
