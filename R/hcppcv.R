@@ -23,6 +23,7 @@
 ##' @param performance function accepting res with res$Res the transformed Residuals
 ##' @return vector of performance measures with names indicating the model parameter
 ##' @importFrom BiocParallel bpworkers bplapply
+##' @export
 ##' @author mvaniterson
 ##' @examples
 ##' \dontrun{

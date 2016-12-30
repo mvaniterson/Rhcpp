@@ -1,15 +1,20 @@
 Package: Rhcpp
 Type: Package
-Title: Normalizing RNA-Sequencing Data by Modeling Hidden Covariates with Prior
- Knowledge plus extentions to perform EWAS and TWAS
-Version: 1.4
-Date: 2015-10-09
+Title: Normalizing RNA-Sequencing Data by Modeling Hidden Covariates
+       with Prior Knowledge plus extentions to perform EWAS and TWAS
+Version: 1.5
+Date: 2016-12-30
 Author: Sara Mostafavi [aut], M. van Iterson [cre]
 Maintainer: Maarten van Iterson <m.van_iterson@lumc.nl>
-Description: A fast R implementation using Rcpp based on the original matlab HCP
- method for Normalizing RNA-Sequencing Data by Modeling Hidden Covariates with
- Prior Knowledge by Mostafavi et al. extended to perform EWAS and TWAS
+Description: A fast R implementation using Rcpp based on the original
+	     matlab HCP method for Normalizing RNA-Sequencing Data by
+	     Modeling Hidden Covariates with Prior Knowledge by
+	     Mostafavi et al. extended to perform EWAS and TWAS.
 License: GPL (>= 2)
-Depends: R (>= 2.10)
-Imports: Rcpp (>= 0.11.5), BiocParallel, ellipse
+Depends:
+    R (>= 2.10)
+Imports:
+    Rcpp (>= 0.11.0),
+    BiocParallel
 LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 5.0.1

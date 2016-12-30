@@ -1,11 +1,11 @@
 library(Rhcpp)
 
 ##load data
-data(hcpp)
+data(rhcppdata)
 
 ##set parameters
-F <- hcpp$F
-Y <- hcpp$Y
+F <- rhcppdata$F
+Y <- rhcppdata$Y
 k <- 10
 lambda1 <- 20
 lambda2 <- 1

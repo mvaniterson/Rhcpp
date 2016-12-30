@@ -34,6 +34,8 @@
 ##' o: value of objective function on consecutive iterations.
 ##' @author mvaniterson
 ##' @references \url{http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0068141}
+##' @importFrom stats runif pnorm
+##' @export
 ##' @examples
 ##' data(rhcppdata)
 ##' F <- rhcppdata$F
