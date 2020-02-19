@@ -2,8 +2,8 @@ Package: Rhcpp
 Type: Package
 Title: Normalizing RNA-Sequencing Data by Modeling Hidden Covariates
        with Prior Knowledge plus extentions to perform EWAS and TWAS
-Version: 1.5
-Date: 2016-12-30
+Version: 1.6
+Date: 2020-02-19
 Author: Sara Mostafavi [aut], M. van Iterson [cre]
 Maintainer: Maarten van Iterson <m.van_iterson@lumc.nl>
 Description: A fast R implementation using Rcpp based on the original

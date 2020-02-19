@@ -27,7 +27,7 @@ Rcpp::List rcpparma_hcp(NumericMatrix Fr, NumericMatrix Yr, int k, int lambda1, 
   Rcpp::NumericMatrix Br(k, d2);
 
   Rcpp::NumericVector unif = runif(k*d2);
-  int cntr = 0;
+  //int cntr = 0;
   for(int i=0; i<k; i++)
     for(int j=0; j<d2; j++)
       {

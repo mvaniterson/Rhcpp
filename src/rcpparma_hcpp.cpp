@@ -30,7 +30,7 @@ Rcpp::List rcpparma_hcpp(NumericMatrix Fr, NumericMatrix Yr, NumericMatrix xr, i
   Rcpp::NumericMatrix gr(1, d2);
 
   Rcpp::NumericVector unif = runif(k*d2);
-  int cntr = 0;
+  //int cntr = 0;
   for(int i=0; i<k; i++) 
     for(int j=0; j<d2; j++)
       {

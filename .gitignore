@@ -3,3 +3,7 @@
 *.[so]
 **/symbols.rds
 **/.Rhistory
+.Rproj.user
+.Rproj
+**/.dll
+
